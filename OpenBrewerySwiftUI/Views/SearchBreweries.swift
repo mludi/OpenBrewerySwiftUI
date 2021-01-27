@@ -9,13 +9,13 @@ import SwiftUI
 import Combine
 
 struct SearchBreweries: View {
-    @ObservedObject var viewModel = BreweriesViewModel()
+    @StateObject var viewModel = BreweriesViewModel()
     
     var body: some View {
         NavigationView {
             VStack {
                 TextField("Enter your query", text: $viewModel.searchQuery, onCommit: {
-                    viewModel.searchBreweries()
+                    viewModel.searchBreweries(viewModel.searchQuery)
                 })
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()

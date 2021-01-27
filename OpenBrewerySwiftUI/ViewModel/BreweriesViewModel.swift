@@ -14,16 +14,29 @@ class BreweriesViewModel: ObservableObject {
     @Published private(set) var errorMessage: String?
     @Published var breweries: [Brewery] = []
     @Published var brewery: Brewery?
-    @Published var searchQuery = "" {
-        didSet {
-            guard searchQuery.count >= 3 else {
-                return
-            }
-            searchBreweries()
-        }
-    }
+    @Published var searchQuery = ""
 
-    let apiClient = APIClient()
+    private let apiClient = APIClient()
+
+    init() {
+        $searchQuery
+            .debounce(for: 0.3, scheduler: DispatchQueue.main)
+            .filter { $0.count >= 3 }
+            .sink { [weak self] query in
+                guard let self = self else { return }
+                self.searchBreweries(query)
+            }
+            .store(in: &cancellables)
+
+        $searchQuery
+            .dropFirst() // ignore first occurence
+            .filter { $0.count < 3 }
+            .sink { [weak self ] _ in
+                guard let self = self else { return }
+                self.breweries = []
+            }
+            .store(in: &cancellables)
+    }
 
     func fetchBreweries() {
         apiClient.fetch(.all)
@@ -49,8 +62,8 @@ class BreweriesViewModel: ObservableObject {
             }.store(in: &cancellables)
     }
 
-    func searchBreweries() {
-        apiClient.fetch(.search(for: searchQuery))
+    func searchBreweries(_ query: String) {
+        apiClient.fetch(.search(for: query))
             .sink { completion in
                 if case .failure(let error) = completion,
                    let apiError = error as? APIError {
