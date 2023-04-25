@@ -26,16 +26,16 @@ enum BreweryType:String, Decodable {
 }
 
 struct Brewery: Decodable, Hashable {
-    typealias IdentifierType = Identifier<Brewery, Int>
+    typealias IdentifierType = Identifier<Brewery, String>
 
     let id: IdentifierType
     let name: String
     let breweryType: BreweryType
     let city: String
-    let street: String
+    var street: String?
     let longitude: String?
     let latitude: String?
-    let websiteUrl: String
+    var websiteUrl: String?
 
     var locationCoordinate: CLLocationCoordinate2D? {
         CLLocationCoordinate2D(
@@ -43,7 +43,7 @@ struct Brewery: Decodable, Hashable {
             longitude: Double(longitude!)!)
     }
 
-    static let demoData = Brewery(id: IdentifierType(1), name: "Almanac Beer Company", breweryType: .micro, city: "Alameda", street: "651B W Tower Ave", longitude: "-122.306283180899", latitude: "37.7834497667258", websiteUrl: "https://almanacbeer.com")
+    static let demoData = Brewery(id: IdentifierType("C73AEAC1-EA5C-4322-B4BE-3399273B7B50"), name: "Almanac Beer Company", breweryType: .micro, city: "Alameda", street: "651B W Tower Ave", longitude: "-122.306283180899", latitude: "37.7834497667258", websiteUrl: "https://almanacbeer.com")
 }
 
 extension Brewery {

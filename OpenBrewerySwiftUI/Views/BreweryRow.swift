@@ -34,13 +34,16 @@ struct BreweryRow: View {
 
                 Text("Type: \(brewery.breweryType.rawValue)")
                     .font(.system(size: 14))
-                Text("\(brewery.city) - \(brewery.street)")
+                Text("\(brewery.city) - \(brewery.street ?? "")")
                     .font(.system(size: 12))
 
                 Spacer()
 
                 HStack {
-                    if let url = URL(string: brewery.websiteUrl) {
+                    if
+                        let webSiteUrlString = brewery.websiteUrl,
+                        let url = URL(string: webSiteUrlString)
+                    {
                         Button("Visit") {
                             self.showSafariView.toggle()
                         }
